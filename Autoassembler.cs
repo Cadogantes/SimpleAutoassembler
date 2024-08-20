@@ -1,15 +1,11 @@
-﻿using Sandbox.ModAPI;
-using Sandbox.ModAPI.Ingame;
-using VRage.Game;
-using VRage.Game.ModAPI.Ingame;
-//================================================//
+﻿//================================================//
 //------------------------------------ INSTRUCTIONS ------------------------------------//
 //================================================//
 //This script will automate production of components and ammunition. It will order production of items until their amount in inventory meets the quota.
 //1) Install Programmable Block on your ship
 //2) Look at the itemsToProduce list in the config section below:
-    // 2.1) Modify desired amount of items to be auto-assembled
-    // 2.2) Adjust items priority - higher priority items will be produced first
+// 2.1) Modify desired amount of items to be auto-assembled
+// 2.2) Adjust items priority - higher priority items will be produced first
 //3) Go to Control Panel, select Programmable Block, click "Edit" button, paste the script there, click "OK", click "Run"
 //================================================//
 //-------------------------------- End of INSTRUCTIONS --------------------------------//
@@ -19,32 +15,32 @@ using VRage.Game.ModAPI.Ingame;
 //------------------------------------ CONFIG ------------------------------------//
 //================================================//
 
-const int productionOrderAmountLimit = 50; //items will be added to production queue in batches not larger than this number
+const int productionOrderAmountLimit = 20; //items will be added to production queue in batches not larger than this number
 public List<ProductionOrder> ConfigureQuota()
 {
     List<ProductionOrder> itemsToProduce = new List<ProductionOrder>();
 
     //Components
-    itemsToProduce.Add(new ProductionOrder(definitionId: MyDefinitionId.Parse("MyObjectBuilder_BlueprintDefinition/SteelPlate"), amount: 1000, priority: 1));
-    itemsToProduce.Add(new ProductionOrder(definitionId: MyDefinitionId.Parse("MyObjectBuilder_BlueprintDefinition/InteriorPlate"), amount: 1000, priority: 1));
-    itemsToProduce.Add(new ProductionOrder(definitionId: MyDefinitionId.Parse("MyObjectBuilder_BlueprintDefinition/ConstructionComponent"), amount: 1000, priority: 1));
+    itemsToProduce.Add(new ProductionOrder(definitionId: MyDefinitionId.Parse("MyObjectBuilder_BlueprintDefinition/SteelPlate"), amount: 500, priority: 1));
+    itemsToProduce.Add(new ProductionOrder(definitionId: MyDefinitionId.Parse("MyObjectBuilder_BlueprintDefinition/InteriorPlate"), amount: 500, priority: 1));
+    itemsToProduce.Add(new ProductionOrder(definitionId: MyDefinitionId.Parse("MyObjectBuilder_BlueprintDefinition/ConstructionComponent"), amount: 500, priority: 1));
     itemsToProduce.Add(new ProductionOrder(definitionId: MyDefinitionId.Parse("MyObjectBuilder_BlueprintDefinition/ComputerComponent"), amount: 100, priority: 1));
     itemsToProduce.Add(new ProductionOrder(definitionId: MyDefinitionId.Parse("MyObjectBuilder_BlueprintDefinition/MetalGrid"), amount: 100, priority: 1));
     itemsToProduce.Add(new ProductionOrder(definitionId: MyDefinitionId.Parse("MyObjectBuilder_BlueprintDefinition/Display"), amount: 100, priority: 1));
-    itemsToProduce.Add(new ProductionOrder(definitionId: MyDefinitionId.Parse("MyObjectBuilder_BlueprintDefinition/GirderComponent"), amount: 0, priority: 1));
+    itemsToProduce.Add(new ProductionOrder(definitionId: MyDefinitionId.Parse("MyObjectBuilder_BlueprintDefinition/GirderComponent"), amount: 100, priority: 1));
     itemsToProduce.Add(new ProductionOrder(definitionId: MyDefinitionId.Parse("MyObjectBuilder_BlueprintDefinition/SmallTube"), amount: 200, priority: 1));
     itemsToProduce.Add(new ProductionOrder(definitionId: MyDefinitionId.Parse("MyObjectBuilder_BlueprintDefinition/LargeTube"), amount: 100, priority: 1));
-    itemsToProduce.Add(new ProductionOrder(definitionId: MyDefinitionId.Parse("MyObjectBuilder_BlueprintDefinition/MotorComponent"), amount: 100, priority: 1));
+    itemsToProduce.Add(new ProductionOrder(definitionId: MyDefinitionId.Parse("MyObjectBuilder_BlueprintDefinition/MotorComponent"), amount: 500, priority: 1));
 
-    itemsToProduce.Add(new ProductionOrder(definitionId: MyDefinitionId.Parse("MyObjectBuilder_BlueprintDefinition/PowerCell"), amount: 0, priority: 1));
-    itemsToProduce.Add(new ProductionOrder(definitionId: MyDefinitionId.Parse("MyObjectBuilder_BlueprintDefinition/BulletproofGlass"), amount: 0, priority: 1));
+    itemsToProduce.Add(new ProductionOrder(definitionId: MyDefinitionId.Parse("MyObjectBuilder_BlueprintDefinition/PowerCell"), amount: 50, priority: 1));
+    itemsToProduce.Add(new ProductionOrder(definitionId: MyDefinitionId.Parse("MyObjectBuilder_BlueprintDefinition/BulletproofGlass"), amount: 50, priority: 1));
     itemsToProduce.Add(new ProductionOrder(definitionId: MyDefinitionId.Parse("MyObjectBuilder_BlueprintDefinition/DetectorComponent"), amount: 0, priority: 1));
     itemsToProduce.Add(new ProductionOrder(definitionId: MyDefinitionId.Parse("MyObjectBuilder_BlueprintDefinition/ExplosivesComponent"), amount: 0, priority: 1));
     itemsToProduce.Add(new ProductionOrder(definitionId: MyDefinitionId.Parse("MyObjectBuilder_BlueprintDefinition/GravityGeneratorComponent"), amount: 0, priority: 1));
     itemsToProduce.Add(new ProductionOrder(definitionId: MyDefinitionId.Parse("MyObjectBuilder_BlueprintDefinition/MedicalComponent"), amount: 0, priority: 1));
     itemsToProduce.Add(new ProductionOrder(definitionId: MyDefinitionId.Parse("MyObjectBuilder_BlueprintDefinition/RadioCommunicationComponent"), amount: 0, priority: 1));
     itemsToProduce.Add(new ProductionOrder(definitionId: MyDefinitionId.Parse("MyObjectBuilder_BlueprintDefinition/ReactorComponent"), amount: 0, priority: 1));
-    itemsToProduce.Add(new ProductionOrder(definitionId: MyDefinitionId.Parse("MyObjectBuilder_BlueprintDefinition/SolarCell"), amount: 0, priority: 1));
+    itemsToProduce.Add(new ProductionOrder(definitionId: MyDefinitionId.Parse("MyObjectBuilder_BlueprintDefinition/SolarCell"), amount: 50, priority: 1));
     itemsToProduce.Add(new ProductionOrder(definitionId: MyDefinitionId.Parse("MyObjectBuilder_BlueprintDefinition/Superconductor"), amount: 0, priority: 1));
     itemsToProduce.Add(new ProductionOrder(definitionId: MyDefinitionId.Parse("MyObjectBuilder_BlueprintDefinition/ThrustComponent"), amount: 0, priority: 1));
 
@@ -158,10 +154,10 @@ public List<ProductionOrder> DecideNextProductionItems(List<ProductionOrder> ite
     //for each item in itemsToProduce calculate how many needs to be produced to reach quota
     foreach (var item in itemsToProduce)
     {
-        
+
         var aux = itemsInGrid.Where(x => item.DefinitionId.ToString().Contains(x.Type.SubtypeId)).FirstOrDefault();
-        uint amountInInventory = aux == null ? 0 : aux.Amount;        
-        uint amountInProduction = (uint)productionQueue.Where(x => item.DefinitionId == x.BlueprintId).FirstOrDefault().Amount.ToIntSafe();        
+        uint amountInInventory = aux == null ? 0 : aux.Amount;
+        uint amountInProduction = (uint)productionQueue.Where(x => item.DefinitionId == x.BlueprintId).FirstOrDefault().Amount.ToIntSafe();
         decimal amountToProduce = item.Amount - (decimal)amountInInventory - (decimal)amountInProduction;
 
         if (amountToProduce > 0)
@@ -189,20 +185,28 @@ public void QueueProduction(List<ProductionOrder> itemsToProduce = null)
     }
 
     //let's limit the next order, as to not order too much at once in one assembler
-    itemsToProduce.Select(order => { order.Amount = Math.Min(order.Amount, productionOrderAmountLimit); return order; }).ToList();
+    //var nextOrder = itemsToProduce.Select(order => { order.Amount = Math.Min(order.Amount, productionOrderAmountLimit); return order; }).ToList();
 
     foreach (var itemToProduce in itemsToProduce)
     {
-        //get idle assemblers
+        var amountToProduce = itemToProduce.Amount;
+
+        //get viable assemblers
         List<IMyAssembler> assemblers = new List<IMyAssembler>();
         GridTerminalSystem.GetBlocksOfType(assemblers, block => block.IsSameConstructAs(Me));
-        IMyAssembler availableAssembler = assemblers.Where(assembler => GetAssemblerQueueLength(assembler)<2 && GetAssemblerQueuedItemsCount(assembler) < productionOrderAmountLimit && assembler.Enabled && !assembler.CooperativeMode).FirstOrDefault();
-        if (availableAssembler == null) return; // if no available assembler - do nothing
+        List<IMyAssembler> availableAssemblers = assemblers.Where(assembler => GetAssemblerQueueLength(assembler) < 2 && GetAssemblerQueuedItemsCount(assembler) < productionOrderAmountLimit && assembler.Enabled && !assembler.CooperativeMode).ToList();
 
-        //order production to the first free assembler
-        //Echo($"\nBlueprint: {itemToProduce.DefinitionId}");
-        //Echo($"Can assemble: {availableAssembler.CanUseBlueprint(itemToProduce.DefinitionId).ToString()}");
-        if (availableAssembler.CanUseBlueprint(itemToProduce.DefinitionId)) availableAssembler.AddQueueItem(itemToProduce.DefinitionId, itemToProduce.Amount);
+        //order production to found assemblers
+        foreach (var availableAssembler in availableAssemblers)
+        {
+            var amountToProduceInOneAssembler = Math.Min(amountToProduce, productionOrderAmountLimit);
+            if (availableAssembler.CanUseBlueprint(itemToProduce.DefinitionId)) availableAssembler.AddQueueItem(itemToProduce.DefinitionId, amountToProduceInOneAssembler);
+            amountToProduce -= amountToProduceInOneAssembler;
+            if (amountToProduce <= 0) break;
+        }
+
+
+
     }
 }
 
